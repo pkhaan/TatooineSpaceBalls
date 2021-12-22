@@ -1,38 +1,24 @@
 ﻿  Renderer.cpp
-C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(419,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(591,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
+C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(79,42): error C2440: 'initializing': cannot convert from 'void *' to 'unsigned char *'
+C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(79,22): message : Conversion from 'void*' to pointer to non-'void' requires an explicit cast
+C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(444,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(616,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(595,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
+C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(620,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(600,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
+C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(625,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(604,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
+C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\Source\Renderer.cpp(629,25): warning C4244: '=': conversion from 'int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-  Generating code
-  1 of 1126 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    10 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  Lab4.vcxproj -> C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\x64\Release\Lab4.exe
-  copy "C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\*.dll" "C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\x64\Release\"
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\glew32.dll
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\libjpeg-9.dll
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\libpng16-16.dll
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\libtiff-5.dll
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\libwebp-4.dll
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\SDL2.dll
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\SDL2_image.dll
-  C:\Users\costa\Desktop\Cpp\TatooineSpaceBalls\3rd party\bin\zlib1.dll
-          8 file(s) copied.

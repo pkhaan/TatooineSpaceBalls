@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include "SDL2/SDL.h"
+#include <SDL2/SDL_image.h>
 
 // #define TEXTURE_TEST
 
@@ -72,12 +74,32 @@ void Renderer::BuildWorld()
 	// chair.model_matrix = glm::mat4(1.f);
 	// floor.model_matrix = glm::mat4(1.f);
 
+	// Set static background image
+	SDL_Surface* background = IMG_Load("Assets/terrain/CanopusGround.png");
+	unsigned char* data = background->pixels;
+
+	GLuint texHandle;
+	glGenTextures(1, &texHandle);
+	glBindTexture(GL_TEXTURE_2D, texHandle);
+
+	SDL_LockSurface(background);
+	glTexImage2D(GL_TEXTURE_2D, // target
+		0, // level-of-detail
+		GL_RGBA32F, // internal format / number of components
+		background->w, background->h, // size
+		0, // border (must be zero)
+		GL_BGRA, // format
+		GL_UNSIGNED_BYTE, // type
+		data); // data buffer
+	SDL_UnlockSurface(background);
+	glGenerateMipmap(GL_TEXTURE_2D); // generate mipmap if needed
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	GeometryNode& terrain = *this->m_nodes[OBJECS::TERRAIN];
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 
-
-
-	this->m_world_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.02, 0.02, 0.02));
+	// Scale everything down
+	this->m_world_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.02, 0.02, 0.2));
 }
 
 void Renderer::InitCamera()
@@ -356,18 +378,21 @@ bool Renderer::InitGeometricMeshes()
 
 	for (auto & asset : assets)
 	{
-		GeometricMesh* mesh = loader.load(asset);
+		if (asset != NULL)
+		{
+			GeometricMesh* mesh = loader.load(asset);
 
-		if (mesh != nullptr)
-		{
-			GeometryNode* node = new GeometryNode();
-			node->Init(mesh);
-			this->m_nodes.push_back(node);
-			delete mesh;
-		}
-		else
-		{
-			initialized = false;
+			if (mesh != nullptr)
+			{
+				GeometryNode* node = new GeometryNode();
+				node->Init(mesh);
+				this->m_nodes.push_back(node);
+				delete mesh;
+			}
+			else
+			{
+				initialized = false;
+			}
 		}
 	}
 
