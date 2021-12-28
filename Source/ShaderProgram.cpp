@@ -1,6 +1,6 @@
 #include "ShaderProgram.h"
 #include "Tools.h"
-#include "SDL2\SDL.h"
+#include "SDL2/SDL.h"
 
 ShaderProgram::ShaderProgram()
 {

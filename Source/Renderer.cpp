@@ -76,7 +76,7 @@ void Renderer::BuildWorld()
 
 	// Set static background image
 	SDL_Surface* background = IMG_Load("Assets/terrain/CanopusGround.png");
-	unsigned char* data = background->pixels;
+	unsigned char* data = (unsigned char*) background->pixels;
 
 	GLuint texHandle;
 	glGenTextures(1, &texHandle);

@@ -1,5 +1,5 @@
 #include <string>
-#include "GLEW\glew.h"
+#include "GL/glew.h"
 
 #ifndef TOOLS_H
 #define TOOLS_H

@@ -1,9 +1,10 @@
-#include "ObjLoader.h"
+#include "OBJLoader.h"
 #include "GeometricMesh.h"
 #include <algorithm>
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <cstring>
 #include "Tools.h"
 
 using namespace std;

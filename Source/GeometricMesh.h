@@ -2,7 +2,7 @@
 #define GEOMETRIC_MESH_H
 
 #include <vector>
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include "OBJLoader.h"
 
 class GeometricMesh
