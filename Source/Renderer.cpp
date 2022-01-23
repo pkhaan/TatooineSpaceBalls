@@ -115,10 +115,10 @@ void Renderer::InitCamera()
 
 bool Renderer::InitLights()
 {
-	this->m_light.SetColor(glm::vec3(100, 100, 0));  //40.f 
-	this->m_light.SetPosition(glm::vec3(0.85, 0, -4.43)); //(0, 3, 4.5)
-	this->m_light.SetTarget(glm::vec3(0));
-	this->m_light.SetConeSize(40, 50);  //(40, 50)
+	this->m_light.SetColor(glm::vec3(100.f));  //40.f 
+	//this->m_light.SetPosition(glm::vec3(0.85, 0, -4.43)); //(0, 3, 4.5)
+	//this->m_light.SetTarget(glm::vec3(0));
+	this->m_light.SetConeSize(364, 364);  //(40, 50)
 	this->m_light.CastShadow(true);
 
 	return true;
@@ -470,7 +470,7 @@ void Renderer::UpdateCamera(float dt)
 	//std::cout << m_light.GetPosition() << std::endl;
 	m_light.SetPosition(m_camera_position);
 	m_light.SetTarget(m_camera_target_position);
-	m_light.SetConeSize(80, 90);
+	m_light.SetConeSize(100, 120);
 }
 
 bool Renderer::ReloadShaders()
