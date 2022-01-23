@@ -186,7 +186,6 @@ vec3 blinn_phong(const in vec3 pSurfToEye, const in vec3 pSurfToLight)
 
 void main(void)
 {
-
     vec3 surfToEye = normalize(uniform_camera_pos - f_position_wcs);
 	vec3 surfToLight = normalize(uniform_light_pos - f_position_wcs);
 

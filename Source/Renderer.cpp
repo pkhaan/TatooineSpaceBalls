@@ -88,18 +88,14 @@ void Renderer::BuildWorld()
 		glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
 		craft.model_matrix;
 
-
-
-
-
 	// Scale everything down
-	this->m_world_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.02, 0.02, 0.02));
+	this->m_world_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.01, 0.01, 0.01));
 }
 
 void Renderer::InitCamera()
 {
-	this->m_camera_position = glm::vec3(2, 2, 4.5);
-	this->m_camera_target_position = glm::vec3(0, 0, 0);
+	this->m_camera_position = glm::vec3(0.705047 ,0.587821, -2.59866); //(2, 2, 4.5)
+	this->m_camera_target_position = glm::vec3(-3.21907, 0.00723737, 0.938888);
 	this->m_camera_up_vector = glm::vec3(0, 1, 0);
 
 	this->m_view_matrix = glm::lookAt(
@@ -111,14 +107,32 @@ void Renderer::InitCamera()
 		glm::radians(45.f),
 		this->m_screen_width / (float)this->m_screen_height,
 		0.1f, 100.f);
+
+	// Relocate the craft in front of the camera
+	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
+	glm::vec3 craftCoords = CameraToNodeCoords(m_camera_position);
+	craft.model_matrix *= glm::rotate(craft.model_matrix, glm::radians(135.f), glm::vec3(0, 1, 0));
+	craft.model_matrix[3] = glm::vec4(craftCoords.x, 30.0, craftCoords.z + 30.0, 1);
+
+
+
+
+
+
+
 }
 
 bool Renderer::InitLights()
 {
-	this->m_light.SetColor(glm::vec3(100.f));  //40.f 
-	//this->m_light.SetPosition(glm::vec3(0.85, 0, -4.43)); //(0, 3, 4.5)
-	//this->m_light.SetTarget(glm::vec3(0));
-	this->m_light.SetConeSize(364, 364);  //(40, 50)
+	//GeometryNode& hull = *this->m_nodes[OBJECS::COLLISION_HULL];
+	//float width = 2.0f * glm::length(hull.model_matrix[0]);
+	//float diagonal = sqrt(2.0f * pow(width, 2));
+	//float height = sqrt(pow(width, 2) - pow(diagonal / 2, 2));
+
+	this->m_light.SetColor(glm::vec3(253.f,243.f, 198.f));  //40.f 
+	this->m_light.SetPosition(glm::vec3(-0.20111 ,9.11239 ,-1.14328)); //(0, 3, 4.5)
+	this->m_light.SetTarget(glm::vec3(0.100368, 3.81349, -0.859176));
+	this->m_light.SetConeSize(110, 120);  //(40, 50)
 	this->m_light.CastShadow(true);
 
 	return true;
@@ -363,9 +377,6 @@ bool Renderer::InitCommonItems()
 
 
 
-
-
-
 bool Renderer::InitGeometricMeshes()
 {
 	std::array<const char*, OBJECS::SIZE_ALL> assets = {
@@ -418,11 +429,10 @@ void Renderer::UpdateGeometry(float dt)
 	GeometryNode& terrain = *this->m_nodes[OBJECS::TERRAIN];
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 
-
 	craft.app_model_matrix =
-		glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
+		//glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
 		//glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
-		glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
+		//glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
 		craft.model_matrix;
 
 	/*bunny.app_model_matrix =
@@ -468,9 +478,9 @@ void Renderer::UpdateCamera(float dt)
 	std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
 	std::cout << m_camera_target_position.x << " " << m_camera_target_position.y << " " << m_camera_target_position.z << " " << std::endl;
 	//std::cout << m_light.GetPosition() << std::endl;
-	m_light.SetPosition(m_camera_position);
-	m_light.SetTarget(m_camera_target_position);
-	m_light.SetConeSize(100, 120);
+	//m_light.SetPosition(m_camera_position);
+	//m_light.SetTarget(m_camera_target_position);
+	//m_light.SetConeSize(110, 120);
 }
 
 bool Renderer::ReloadShaders()
@@ -527,6 +537,11 @@ void Renderer::RenderStaticGeometry()
 
 	for (auto& node : this->m_nodes)
 	{
+		if (node == m_nodes[OBJECS::COLLISION_HULL])
+		{
+			continue;
+		}
+
 		glBindVertexArray(node->m_vao);
 
 		m_geometry_program.loadMat4("uniform_projection_matrix", proj * node->app_model_matrix);
@@ -662,6 +677,11 @@ void Renderer::RenderShadowMaps()
 
 		for (auto& node : this->m_nodes)
 		{
+			if (node == m_nodes[OBJECS::COLLISION_HULL])
+			{
+				continue;
+			}
+
 			glBindVertexArray(node->m_vao);
 
 			m_spot_light_shadow_map_program.loadMat4("uniform_projection_matrix", proj * node->app_model_matrix);
@@ -679,6 +699,11 @@ void Renderer::RenderShadowMaps()
 
 		for (auto& node : this->m_collidables_nodes)
 		{
+			if (node == m_nodes[OBJECS::COLLISION_HULL])
+			{
+				continue;
+			}
+
 			if (node->intersectRay(m_camera_position, camera_dir, m_world_matrix, isectT)) continue;
 
 			glBindVertexArray(node->m_vao);
@@ -720,4 +745,14 @@ void Renderer::CameraMoveRight(bool enable)
 void Renderer::CameraLook(glm::vec2 lookDir)
 {
 	m_camera_look_angle_destination = lookDir;
+}
+
+glm::vec3 Renderer::CameraToNodeCoords(const glm::vec3 & cameraCoords) {
+	const double analogy = 100.0;
+	return glm::vec3(cameraCoords.x * analogy, cameraCoords.y * analogy, cameraCoords.z * analogy);
+}
+
+glm::vec3 NodeToCameraCoords(const glm::vec3 & nodeCoords) {
+	const double analogy = 0.01;
+	return glm::vec3(nodeCoords.x * analogy, nodeCoords.y * analogy, nodeCoords.z * analogy);
 }

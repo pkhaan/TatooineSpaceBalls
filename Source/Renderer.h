@@ -41,6 +41,8 @@ protected:
 	void RenderCollidableGeometry();
 	void RenderShadowMaps();
 	void RenderPostProcess();
+	glm::vec3 CameraToNodeCoords(const glm::vec3 & cameraCoords);
+	glm::vec3 NodeToCameraCoords(const glm::vec3 & nodeCoords);
 
 	enum OBJECS
 	{
