@@ -115,10 +115,10 @@ void Renderer::InitCamera()
 
 bool Renderer::InitLights()
 {
-	this->m_light.SetColor(glm::vec3(40.f));  //40.f yellow
-	this->m_light.SetPosition(glm::vec3(0, 3, 4.5)); //(0, 3, 4.5)
+	this->m_light.SetColor(glm::vec3(100, 100, 0));  //40.f 
+	this->m_light.SetPosition(glm::vec3(0.85, 0, -4.43)); //(0, 3, 4.5)
 	this->m_light.SetTarget(glm::vec3(0));
-	this->m_light.SetConeSize(100, 120);  //(40, 50)
+	this->m_light.SetConeSize(40, 50);  //(40, 50)
 	this->m_light.CastShadow(true);
 
 	return true;
@@ -132,12 +132,12 @@ bool Renderer::InitShaders()
 	m_geometry_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
 	m_geometry_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	m_geometry_program.CreateProgram();
-	this->m_geometry_program.LoadUniform("uniform_projection_matrix");
-	this->m_geometry_program.LoadUniform("uniform_normal_matrix");
-	this->m_geometry_program.LoadUniform("uniform_diffuse");
-	this->m_geometry_program.LoadUniform("uniform_has_texture");
-	this->m_geometry_program.LoadUniform("uniform_texture");
-	this->m_geometry_program.LoadUniform("uniform_light_color");
+	//this->m_geometry_program.LoadUniform("uniform_projection_matrix");
+	//this->m_geometry_program.LoadUniform("uniform_normal_matrix");
+	//this->m_geometry_program.LoadUniform("uniform_diffuse");
+	//this->m_geometry_program.LoadUniform("uniform_has_texture");
+	//this->m_geometry_program.LoadUniform("uniform_texture");
+	//this->m_geometry_program.LoadUniform("uniform_light_color");
 
 	vertex_shader_path = "Assets/Shaders/post_process.vert";
 	fragment_shader_path = "Assets/Shaders/post_process.frag";
@@ -224,7 +224,7 @@ bool Renderer::InitCommonItems()
 	return true;
 }
 
- /* bool Renderer::InitCommonMeshes()
+  /*bool Renderer::InitCommonMeshes()
 {
 	std::vector<glm::vec3> vertices{
 		glm::vec3(-1, -1, 0),
@@ -359,7 +359,7 @@ bool Renderer::InitCommonItems()
 
 
 	return true;
-}*/
+	}*/
 
 
 
@@ -370,7 +370,7 @@ bool Renderer::InitGeometricMeshes()
 {
 	std::array<const char*, OBJECS::SIZE_ALL> assets = {
 		"Assets/terrain/collision_hull.obj",
-		"Assets/terrain/terrain.obj",
+		"Assets/parts/terrain.obj",
 		"Assets/craft/craft.obj", };
 
 	bool initialized = true;
@@ -468,8 +468,9 @@ void Renderer::UpdateCamera(float dt)
 	std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
 	std::cout << m_camera_target_position.x << " " << m_camera_target_position.y << " " << m_camera_target_position.z << " " << std::endl;
 	//std::cout << m_light.GetPosition() << std::endl;
-	//m_light.SetPosition(m_camera_position);
-	//m_light.SetTarget(m_camera_target_position);
+	m_light.SetPosition(m_camera_position);
+	m_light.SetTarget(m_camera_target_position);
+	m_light.SetConeSize(80, 90);
 }
 
 bool Renderer::ReloadShaders()
