@@ -181,12 +181,13 @@ vec3 blinn_phong(const in vec3 pSurfToEye, const in vec3 pSurfToLight)
 	vec3 diffuse = kd * NdotL;
 	vec3 specular = NdotL > 0.0 ? ks * fn * pow(NdotH, uniform_shininess) : vec3(0.0);
 
-	return (diffuse) * uniform_light_color + uniform_ambient;
+	return (diffuse + specular) * uniform_light_color + uniform_ambient;
 }
 
 void main(void)
 {
-	vec3 surfToEye = normalize(uniform_camera_pos - f_position_wcs);
+
+    vec3 surfToEye = normalize(uniform_camera_pos - f_position_wcs);
 	vec3 surfToLight = normalize(uniform_light_pos - f_position_wcs);
 
 	// check if we have shadows
@@ -197,4 +198,5 @@ void main(void)
 	float dist = distance(uniform_light_pos, f_position_wcs);
 
 	out_color = vec4(shadow_value * brdf * spotEffect / pow(dist, 2), 1.0);
-}
+	//out_color = vec4(blinn_phong(surfToEye, uniform_light_dir), 1.0);
+} 
