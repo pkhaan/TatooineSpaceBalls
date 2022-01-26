@@ -111,8 +111,12 @@ void Renderer::InitCamera()
 	// Relocate the craft in front of the camera
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 	glm::vec3 craftCoords = CameraToNodeCoords(m_camera_position);
+	//glm::vec3 cameraCoords = NodeToCameraCoords(craft.model_matrix);
+
+
+
 	craft.model_matrix *= glm::rotate(craft.model_matrix, glm::radians(135.f), glm::vec3(0, 1, 0));
-	craft.model_matrix[3] = glm::vec4(craftCoords.x, 30.0, craftCoords.z + 30.0, 1);
+	craft.model_matrix[3] = glm::vec4(craftCoords.x - 70.0, 35.0, craftCoords.z + 70.0, 1);
 
 
 
@@ -129,11 +133,11 @@ bool Renderer::InitLights()
 	//float diagonal = sqrt(2.0f * pow(width, 2));
 	//float height = sqrt(pow(width, 2) - pow(diagonal / 2, 2));
 
-	this->m_light.SetColor(glm::vec3(253.f,243.f, 198.f));  //40.f 
+	this->m_light.SetColor(glm::vec3(253.f,243.f, 217.f));  //40.f 
 	this->m_light.SetPosition(glm::vec3(-0.20111 ,9.11239 ,-1.14328)); //(0, 3, 4.5)
 	this->m_light.SetTarget(glm::vec3(0.100368, 3.81349, -0.859176));
 	this->m_light.SetConeSize(110, 120);  //(40, 50)
-	this->m_light.CastShadow(true);
+	this->m_light.CastShadow(false);
 
 	return true;
 }
@@ -430,9 +434,9 @@ void Renderer::UpdateGeometry(float dt)
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 
 	craft.app_model_matrix =
-		//glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
+		glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
 		//glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
-		//glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
+		glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
 		craft.model_matrix;
 
 	/*bunny.app_model_matrix =
@@ -455,6 +459,12 @@ void Renderer::UpdateGeometry(float dt)
 
 void Renderer::UpdateCamera(float dt)
 {
+
+
+	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
+
+	glm::vec3 craftCoords = CameraToNodeCoords(m_camera_position);
+
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
 
 	m_camera_position = m_camera_position + (m_camera_movement.x * 5.f * dt) * direction;
@@ -472,6 +482,7 @@ void Renderer::UpdateCamera(float dt)
 
 	direction = rotation * glm::vec4(direction, 0.f);
 	m_camera_target_position = m_camera_position + direction * glm::distance(m_camera_position, m_camera_target_position);
+	glm::vec3 direction_up = (glm::cross(direction, right));
 
 	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
@@ -481,6 +492,19 @@ void Renderer::UpdateCamera(float dt)
 	//m_light.SetPosition(m_camera_position);
 	//m_light.SetTarget(m_camera_target_position);
 	//m_light.SetConeSize(110, 120);
+
+	//craft.model_matrix *= glm::rotate(craft.model_matrix, glm::radians(135.f), glm::vec3(0, 1, 0));
+	//craft.model_matrix[3] = glm::vec4(craftCoords.x * direction, craftCoords.y * direction_up, craftCoords.z * right, 1);
+
+
+
+
+
+
+
+
+
+
 }
 
 bool Renderer::ReloadShaders()
@@ -727,6 +751,7 @@ void Renderer::RenderShadowMaps()
 void Renderer::CameraMoveForward(bool enable)
 {
 	m_camera_movement.x = (enable) ? 1 : 0;
+
 }
 void Renderer::CameraMoveBackWard(bool enable)
 {

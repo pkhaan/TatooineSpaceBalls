@@ -59,6 +59,7 @@ protected:
 	std::vector<CollidableNode*> m_collidables_nodes;
 
 	LightNode									m_light;
+	LightNode                                   m_lightB;
 	ShaderProgram								m_geometry_program;
 	ShaderProgram								m_post_program;
 	ShaderProgram								m_spot_light_shadow_map_program;
