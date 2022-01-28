@@ -1,5 +1,5 @@
 #include "GeometricMesh.h"
-#include "ObjLoader.h"
+#include "OBJLoader.h"
 #include <sstream>
 
 GeometricMesh::GeometricMesh()

@@ -1,6 +1,13 @@
+#include "Settings.h"
 #include "LightNode.h"
-#include "glm\gtc\matrix_transform.hpp"
 #include "Tools.h"
+#include <cstring>
+
+#ifdef LINUX
+#include "glm/gtc/matrix_transform.hpp"
+#else
+#include "glm\gtc\matrix_transform.hpp"
+#endif
 
 // Spot Light
 LightNode::LightNode()

@@ -1,10 +1,16 @@
 #ifndef SPOTLIGHT_NODE_H
 #define SPOTLIGHT_NODE_H
 
+#include "Settings.h"
 #include "glm/glm.hpp"
-
+#include <string>
 #include <unordered_map>
+
+#ifdef LINUX
+#include "GL/glew.h"
+#else
 #include "GLEW\glew.h"
+#endif
 
 class LightNode
 {

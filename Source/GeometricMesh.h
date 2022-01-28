@@ -1,9 +1,15 @@
 #ifndef GEOMETRIC_MESH_H
 #define GEOMETRIC_MESH_H
 
+#include "Settings.h"
 #include <vector>
-#include <glm\glm.hpp>
 #include "OBJLoader.h"
+
+#ifdef LINUX
+#include <glm/glm.hpp>
+#else
+#include <glm\glm.hpp>
+#endif
 
 class GeometricMesh
 {

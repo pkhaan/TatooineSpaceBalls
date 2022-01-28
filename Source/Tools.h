@@ -1,5 +1,11 @@
+#include "Settings.h"
 #include <string>
+
+#ifdef LINUX
+#include "GL/glew.h"
+#else
 #include "GLEW\glew.h"
+#endif
 
 #ifndef TOOLS_H
 #define TOOLS_H

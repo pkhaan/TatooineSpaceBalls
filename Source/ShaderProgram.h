@@ -1,11 +1,17 @@
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H
 
+#include "Settings.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "GLEW\glew.h"
 #include "glm/gtc/type_ptr.hpp"
+
+#ifdef LINUX
+#include "GL/glew.h"
+#else
+#include "GLEW\glew.h"
+#endif
 
 class ShaderProgram
 {

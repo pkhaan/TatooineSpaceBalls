@@ -1,5 +1,6 @@
-#include "ObjLoader.h"
+#include "OBJLoader.h"
 #include "GeometricMesh.h"
+#include <cstring>
 #include <algorithm>
 #include <sstream>
 #include <fstream>

@@ -1,11 +1,19 @@
 #ifndef GEOMETRY_NODE_H
 #define GEOMETRY_NODE_H
 
+#include "Settings.h"
 #include <vector>
-#include "GLEW\glew.h"
 #include <unordered_map>
-#include "glm\gtx\hash.hpp"
+
 #include "AssetManager.hpp"
+
+#ifdef LINUX
+#include "GL/glew.h"
+#include "glm/gtx/hash.hpp"
+#else
+#include "GLEW\glew.h"
+#include "glm\gtx\hash.hpp"
+#endif
 
 class GeometryNode
 {

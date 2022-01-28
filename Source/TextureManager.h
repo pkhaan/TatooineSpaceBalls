@@ -1,10 +1,16 @@
 #ifndef TEXTURE_MANAGER_H
 #define TEXTURE_MANAGER_H
 
+#include "Settings.h"
 #include "SDL2/SDL.h"
-#include "GLEW\glew.h"
 #include <string>
 #include <vector>
+
+#ifdef LINUX
+#include "GL/glew.h"
+#else
+#include "GLEW\glew.h"
+#endif
 
 // Singleton Class of Texture Manager
 class TextureManager

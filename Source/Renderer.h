@@ -1,13 +1,20 @@
 #ifndef BIM_ENGINE_RENDERER_H
 #define BIM_ENGINE_RENDERER_H
 
-#include "GLEW\glew.h"
-#include "glm\glm.hpp"
+#include "Settings.h"
 #include <vector>
 #include "ShaderProgram.h"
 #include "GeometryNode.h"
 #include "CollidableNode.h"
 #include "LightNode.h"
+
+#ifdef LINUX
+#include "GL/glew.h"
+#include "glm/glm.hpp"
+#else
+#include "GLEW\glew.h"
+#include "glm\glm.hpp"
+#endif
 
 class Renderer
 {

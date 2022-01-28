@@ -1,10 +1,15 @@
-#pragma once
-
+#include "Settings.h"
 #include "SDL2/SDL.h"
-#include "GLEW\glew.h"
+#include <cstring>
 #include <string>
 #include <vector>
 #include "GeometricMesh.h"
+
+#ifdef LINUX
+#include "GL/glew.h"
+#else
+#include "GLEW\glew.h"
+#endif
 
 // Singleton Class of Texture Manager
 class AssetManager

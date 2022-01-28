@@ -1,6 +1,12 @@
+#include "Settings.h"
 #include "ShaderProgram.h"
 #include "Tools.h"
+
+#ifdef LINUX
+#include "SDL2/SDL.h"
+#else
 #include "SDL2\SDL.h"
+#endif
 
 ShaderProgram::ShaderProgram()
 {

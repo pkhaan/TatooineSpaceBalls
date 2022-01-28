@@ -1,9 +1,15 @@
+#include"Settings.h"
 #include "SDL2/SDL.h"
 #include <iostream>
 #include <chrono>
-#include "GLEW\glew.h"
 #include "Renderer.h"
 #include <thread>         // std::this_thread::sleep_for
+
+#ifdef LINUX
+#include "GL/glew.h"
+#else
+#include "GLEW\glew.h"
+#endif
 
 using namespace std;
 
