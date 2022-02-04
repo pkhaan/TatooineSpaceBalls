@@ -42,4 +42,22 @@ void GeometryNode::Init(const std::string & name, GeometricMesh* mesh)
 	}
 
 	this->m_aabb.center = (this->m_aabb.min + this->m_aabb.max) * 0.5f;
+
+	this->m_mesh = mesh;
 }
+
+void GeometryNode::RealignAabb()
+{
+	this->m_aabb.min = glm::vec3(std::numeric_limits<float_t>::max());
+	this->m_aabb.max = glm::vec3(-std::numeric_limits<float_t>::max());
+
+	for (auto& v : m_mesh->vertices)
+	{
+		this->m_aabb.min = glm::min(this->m_aabb.min, v);
+		this->m_aabb.max = glm::max(this->m_aabb.max, v);
+	}
+
+	this->m_aabb.center = (this->m_aabb.min + this->m_aabb.max) * 0.5f;
+}
+
+

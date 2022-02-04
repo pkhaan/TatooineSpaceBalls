@@ -8,7 +8,7 @@
 using namespace std;
 
 //Screen attributes
-SDL_Window * window;
+SDL_Window* window;
 
 //OpenGL context 
 SDL_GLContext gContext;
@@ -18,7 +18,7 @@ const int SCREEN_HEIGHT = 860;
 //Event handler
 SDL_Event event;
 
-Renderer * renderer = nullptr;
+Renderer* renderer = nullptr;
 
 void clean_up()
 {
@@ -47,7 +47,7 @@ bool init()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// Create Window
-	window = SDL_CreateWindow("Tatooine Space Balls",
+	window = SDL_CreateWindow("OpenGL Lab 3",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		SCREEN_WIDTH, SCREEN_HEIGHT,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
@@ -86,7 +86,7 @@ bool init()
 	return engine_initialized;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	//Initialize SDL, glew, engine
 	if (init() == false)
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 
 		// Draw
 		renderer->Render();
-		
+
 		//Update screen (swap buffer for double buffering)
 		SDL_GL_SwapWindow(window);
 	}

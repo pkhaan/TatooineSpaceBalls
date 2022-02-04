@@ -21,6 +21,7 @@ protected:
 	glm::mat4										m_projection_matrix;
 	glm::vec3										m_camera_position;
 	glm::vec3										m_camera_target_position;
+	glm::vec3										m_camera_right;
 	glm::vec3										m_camera_up_vector;
 	glm::vec2										m_camera_movement;
 	glm::vec2										m_camera_look_angle_destination;
@@ -59,7 +60,6 @@ protected:
 	std::vector<CollidableNode*> m_collidables_nodes;
 
 	LightNode									m_light;
-	LightNode                                   m_lightB;
 	ShaderProgram								m_geometry_program;
 	ShaderProgram								m_post_program;
 	ShaderProgram								m_spot_light_shadow_map_program;
@@ -81,7 +81,6 @@ public:
 	void										UpdateCamera(float dt);
 	bool										ReloadShaders();
 	void										Render();
-
 	void										CameraMoveForward(bool enable);
 	void										CameraMoveBackWard(bool enable);
 	void										CameraMoveLeft(bool enable);

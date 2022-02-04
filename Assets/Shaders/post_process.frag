@@ -16,7 +16,7 @@ float linearize(const in float depth)
 }
 
 //#define PREVIEW_SHADOW_MAP
-//#define CROSS_HAIR
+#define CROSS_HAIR
 
 void main(void)
 {
@@ -28,11 +28,11 @@ void main(void)
 #elif defined CROSS_HAIR
 	ivec2 halfRes = ivec2(textureSize(uniform_texture, 0) / 2);
 	ivec2 pixel = ivec2(gl_FragCoord.xy);
-out_color = vec4(1.0, 0.0, 0.0, 1.0);
+
 	if((pixel.x == halfRes.x) ||
 	   (pixel.y == halfRes.y))
 	{
-		
+		out_color = vec4(1.0, 0.0, 0.0, 1.0);
 	}
 #endif
 }

@@ -4,12 +4,15 @@
 #include "ShaderProgram.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/quaternion.hpp>
 #include "OBJLoader.h"
 
 #include <algorithm>
 #include <array>
 #include <iostream>
 
+
+#define a 1.F
 // RENDERER
 Renderer::Renderer()
 {
@@ -80,22 +83,32 @@ void Renderer::BuildWorld()
 
 	GeometryNode& terrain = *this->m_nodes[OBJECS::TERRAIN];
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
+	CollidableNode& hull = *this->m_collidables_nodes[OBJECS::COLLISION_HULL];
 
-
+	// Relocate the craft to its starting position
+	craft.model_matrix[3] = glm::vec4(33.6461, 30., -229.83, 1.);
+	craft.m_aabb.center = glm::vec3(33.6461, 30., -229.83);
+	//craft.model_matrix = glm::rotate(craft.model_matrix, glm::radians(90), glm::vec3(0, 1, 0));
 	craft.app_model_matrix =
-		glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
-		//glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
-		glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
+		// glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
+		// glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
+		// glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
 		craft.model_matrix;
-
+	
 	// Scale everything down
 	this->m_world_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.01, 0.01, 0.01));
+
 }
 
 void Renderer::InitCamera()
 {
-	this->m_camera_position = glm::vec3(0.705047 ,0.587821, -2.59866); //(2, 2, 4.5)
-	this->m_camera_target_position = glm::vec3(-3.21907, 0.00723737, 0.938888);
+	// Have the camera positioned behind the craft
+	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
+	glm::vec3 craftCoords = NodeToCameraCoords(craft.model_matrix[3]);
+	this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z); 
+	this->m_camera_position.y = 0.4;  // Slightly above the craft   
+	this->m_camera_target_position = craftCoords;
+	this->m_camera_right = glm::normalize(m_camera_target_position * glm::vec3(0, 1, 0));
 	this->m_camera_up_vector = glm::vec3(0, 1, 0);
 
 	this->m_view_matrix = glm::lookAt(
@@ -104,26 +117,9 @@ void Renderer::InitCamera()
 		m_camera_up_vector);
 
 	this->m_projection_matrix = glm::perspective(
-		glm::radians(45.f),
+		glm::radians(70.f),
 		this->m_screen_width / (float)this->m_screen_height,
 		0.1f, 100.f);
-
-	// Relocate the craft in front of the camera
-	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
-	glm::vec3 craftCoords = CameraToNodeCoords(m_camera_position);
-	//glm::vec3 cameraCoords = NodeToCameraCoords(craft.model_matrix);
-
-
-
-	craft.model_matrix *= glm::rotate(craft.model_matrix, glm::radians(135.f), glm::vec3(0, 1, 0));
-	craft.model_matrix[3] = glm::vec4(craftCoords.x - 70.0, 35.0, craftCoords.z + 70.0, 1);
-
-
-
-
-
-
-
 }
 
 bool Renderer::InitLights()
@@ -242,151 +238,18 @@ bool Renderer::InitCommonItems()
 	return true;
 }
 
-  /*bool Renderer::InitCommonMeshes()
+bool Renderer::InitCommonMeshes()
 {
-	std::vector<glm::vec3> vertices{
-		glm::vec3(-1, -1, 0),
-		glm::vec3(1, -1, 0),
-		glm::vec3(-1, 1, 0),
-		glm::vec3(1, 1, 0)
-	};
-
-	std::vector<glm::vec3> normals{
-		glm::vec3(0, 1, 0),
-		glm::vec3(0, 1, 0),
-		glm::vec3(0, 1, 0),
-		glm::vec3(0, 1, 0)
-	};
-
-	std::vector<glm::vec2> uvs{
-		glm::vec2(0, 0),
-		glm::vec2(1, 0),
-		glm::vec2(0, 1),
-		glm::vec2(1, 1)
-	};
-
-	std::string texFile = "Assets/terrain/terrain_BaseMap.png";
-
-	GLint max_anisotropy = 1;
-	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);
-
-
-
-	GeometryNode* node1 = new GeometryNode();
-	node1->Init(vertices, normals, uvs, texFile);
-	node1->model_matrix =
-		glm::translate(glm::mat4(1.f), glm::vec3(-2, 0, -2)) *
-		glm::rotate(glm::mat4(1.f), glm::radians(-80.f), glm::vec3(1, 0, 0)) *
-		glm::scale(glm::mat4(1.f), glm::vec3(1, 10, 1));
-
-	glBindTexture(GL_TEXTURE_2D, node1->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node1);
-
-	GeometryNode* node2 = new GeometryNode();
-	node2->Init(vertices, normals, uvs, texFile);
-	node2->model_matrix = glm::translate(glm::mat4(1.f), glm::vec3(-2, 2.2, -12));
-
-	glBindTexture(GL_TEXTURE_2D, node2->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node2);
-
-	GeometryNode* node3 = new GeometryNode();
-	node3->Init(vertices, normals, uvs, texFile);
-	node3->model_matrix =
-		glm::translate(glm::mat4(1.f), glm::vec3(0, 0, -2)) *
-		glm::rotate(glm::mat4(1.f), glm::radians(-80.f), glm::vec3(1, 0, 0)) *
-		glm::scale(glm::mat4(1.f), glm::vec3(1, 10, 1));
-
-	glBindTexture(GL_TEXTURE_2D, node3->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node3);
-
-	GeometryNode* node4 = new GeometryNode();
-	node4->Init(vertices, normals, uvs, texFile);
-	node4->model_matrix = glm::translate(glm::mat4(1.f), glm::vec3(0, 2.2, -12));
-
-	glBindTexture(GL_TEXTURE_2D, node4->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node4);
-
-	GeometryNode* node5 = new GeometryNode();
-	node5->Init(vertices, normals, uvs, texFile, true);
-	node5->model_matrix =
-		glm::translate(glm::mat4(1.f), glm::vec3(2, 0, -2)) *
-		glm::rotate(glm::mat4(1.f), glm::radians(-80.f), glm::vec3(1, 0, 0)) *
-		glm::scale(glm::mat4(1.f), glm::vec3(1, 10, 1));
-
-	glBindTexture(GL_TEXTURE_2D, node5->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node5);
-
-	GeometryNode* node6 = new GeometryNode();
-	node6->Init(vertices, normals, uvs, texFile, true);
-	node6->model_matrix = glm::translate(glm::mat4(1.f), glm::vec3(2, 2.2, -12));
-
-	glBindTexture(GL_TEXTURE_2D, node6->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node6);
-
-	GeometryNode* node7 = new GeometryNode();
-	node7->Init(vertices, normals, uvs, texFile, true);
-	node7->model_matrix =
-		glm::translate(glm::mat4(1.f), glm::vec3(4, 0, -2)) *
-		glm::rotate(glm::mat4(1.f), glm::radians(-80.f), glm::vec3(1, 0, 0)) *
-		glm::scale(glm::mat4(1.f), glm::vec3(1, 10, 1));
-
-	glBindTexture(GL_TEXTURE_2D, node7->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node7);
-
-	GeometryNode* node8 = new GeometryNode();
-	node8->Init(vertices, normals, uvs, texFile, true);
-	node8->model_matrix = glm::translate(glm::mat4(1.f), glm::vec3(4, 2.2, -12));
-
-	glBindTexture(GL_TEXTURE_2D, node8->parts[0].textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_anisotropy);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	this->m_opaque_nodes.push_back(node8);
-
-
-
-	return true;
-	}*/
-
-
+	return true;  
+}
 
 bool Renderer::InitGeometricMeshes()
 {
 	std::array<const char*, OBJECS::SIZE_ALL> assets = {
 		"Assets/terrain/collision_hull.obj",
 		"Assets/parts/terrain.obj",
-		"Assets/craft/craft.obj", };
+		"Assets/craft/craft.obj",
+	};
 
 	bool initialized = true;
 	OBJLoader loader;
@@ -432,13 +295,18 @@ void Renderer::UpdateGeometry(float dt)
 {
 	GeometryNode& terrain = *this->m_nodes[OBJECS::TERRAIN];
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
+	CollidableNode& hull = *this->m_collidables_nodes[0];
 
 	craft.app_model_matrix =
 		glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
-		//glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
+		//glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 0.f, 0.f)) *
 		glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
 		craft.model_matrix;
 
+	hull.app_model_matrix = hull.model_matrix;
+
+
+	
 	/*bunny.app_model_matrix =
 		glm::translate(glm::mat4(1.f), bunny.m_aabb.center) *
 		glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
@@ -459,10 +327,8 @@ void Renderer::UpdateGeometry(float dt)
 
 void Renderer::UpdateCamera(float dt)
 {
-
-
+	// Relocate the camera behind the craft
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
-
 	glm::vec3 craftCoords = CameraToNodeCoords(m_camera_position);
 
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
@@ -482,29 +348,17 @@ void Renderer::UpdateCamera(float dt)
 
 	direction = rotation * glm::vec4(direction, 0.f);
 	m_camera_target_position = m_camera_position + direction * glm::distance(m_camera_position, m_camera_target_position);
-	glm::vec3 direction_up = (glm::cross(direction, right));
 
 	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
 
-	std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
+	//std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
 	std::cout << m_camera_target_position.x << " " << m_camera_target_position.y << " " << m_camera_target_position.z << " " << std::endl;
+	//std::cout << craft.m_aabb.center.x << " " << craft.m_aabb.center.y << " " << craft.m_aabb.center.z << " " << std::endl;
+
 	//std::cout << m_light.GetPosition() << std::endl;
 	//m_light.SetPosition(m_camera_position);
 	//m_light.SetTarget(m_camera_target_position);
 	//m_light.SetConeSize(110, 120);
-
-	//craft.model_matrix *= glm::rotate(craft.model_matrix, glm::radians(135.f), glm::vec3(0, 1, 0));
-	//craft.model_matrix[3] = glm::vec4(craftCoords.x * direction, craftCoords.y * direction_up, craftCoords.z * right, 1);
-
-
-
-
-
-
-
-
-
-
 }
 
 bool Renderer::ReloadShaders()
@@ -751,8 +605,8 @@ void Renderer::RenderShadowMaps()
 void Renderer::CameraMoveForward(bool enable)
 {
 	m_camera_movement.x = (enable) ? 1 : 0;
-
 }
+
 void Renderer::CameraMoveBackWard(bool enable)
 {
 	m_camera_movement.x = (enable) ? -1 : 0;
@@ -777,7 +631,7 @@ glm::vec3 Renderer::CameraToNodeCoords(const glm::vec3 & cameraCoords) {
 	return glm::vec3(cameraCoords.x * analogy, cameraCoords.y * analogy, cameraCoords.z * analogy);
 }
 
-glm::vec3 NodeToCameraCoords(const glm::vec3 & nodeCoords) {
+glm::vec3 Renderer::NodeToCameraCoords(const glm::vec3 & nodeCoords) {
 	const double analogy = 0.01;
 	return glm::vec3(nodeCoords.x * analogy, nodeCoords.y * analogy, nodeCoords.z * analogy);
 }

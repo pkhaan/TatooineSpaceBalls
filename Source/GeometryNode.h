@@ -9,11 +9,14 @@
 
 class GeometryNode
 {
+	GeometricMesh* m_mesh;
+
 public:
 	GeometryNode();
 	virtual ~GeometryNode();
 
 	virtual void Init(const std::string & name, class GeometricMesh* mesh);
+	void RealignAabb();
 
 	struct Objects
 	{
@@ -30,6 +33,7 @@ public:
 		GLuint bump_textureID;
 		GLuint emissive_textureID;
 		GLuint mask_textureID;
+		GLuint textureID;
 	};
 
 	struct aabb
@@ -37,6 +41,9 @@ public:
 		glm::vec3 min;
 		glm::vec3 max;
 		glm::vec3 center;
+
+		aabb() {}
+
 	};
 
 	std::vector<Objects> parts;

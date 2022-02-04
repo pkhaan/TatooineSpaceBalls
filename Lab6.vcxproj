@@ -162,6 +162,7 @@ copy "$(SolutionDir)3rd party\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Source\OBJLoader.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\ShaderProgram.cpp" />
+    <ClCompile Include="Source\Skybox.cpp" />
     <ClCompile Include="Source\TextureManager.cpp" />
     <ClCompile Include="Source\Tools.cpp" />
   </ItemGroup>
@@ -174,8 +175,10 @@ copy "$(SolutionDir)3rd party\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Source\OBJLoader.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\ShaderProgram.h" />
+    <ClInclude Include="Source\Skybox.h" />
     <ClInclude Include="Source\TextureManager.h" />
     <ClInclude Include="Source\Tools.h" />
+    <ClInclude Include="Source\Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\basic_rendering.frag" />
@@ -184,6 +187,8 @@ copy "$(SolutionDir)3rd party\bin\*.dll" "$(OutDir)"</Command>
     <None Include="Assets\Shaders\post_process.vert" />
     <None Include="Assets\Shaders\shadow_map_rendering.frag" />
     <None Include="Assets\Shaders\shadow_map_rendering.vert" />
+    <None Include="Assets\Shaders\skybox_rendering.frag" />
+    <None Include="Assets\Shaders\skybox_rendering.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
