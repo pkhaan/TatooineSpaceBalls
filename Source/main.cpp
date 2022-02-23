@@ -3,9 +3,16 @@
 #include <chrono>
 #include "GLEW\glew.h"
 #include "Renderer.h"
-#include <thread>         // std::this_thread::sleep_for
+#include <thread>   // std::this_thread::sleep_for
+#include <irrklang/irrKlang.h>
 
 using namespace std;
+using namespace irrklang;
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+
+// Mouse coordinates
+int mouseX;
+int mouseY;
 
 //Screen attributes
 SDL_Window* window;
@@ -47,7 +54,7 @@ bool init()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// Create Window
-	window = SDL_CreateWindow("OpenGL Lab 3",
+	window = SDL_CreateWindow("Tatooine SPace Balls",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		SCREEN_WIDTH, SCREEN_HEIGHT,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
@@ -88,6 +95,22 @@ bool init()
 
 int main(int argc, char* argv[])
 {
+
+	
+	// start the sound engine with default parameters
+	/*ISoundEngine* engine = createIrrKlangDevice();
+	//Initialize SDL, glew, engine
+	if (!engine)
+		return 0; // error starting up the engine
+	ISound* music = engine->play3D("Assets/audio/soundtrack_wav.wav",
+		vec3df(0, 0, 0), true, false, true);
+	if (music)
+		music->setMinDistance(5.0f);
+	printf("\nPlaying streamed sound in 3D.");*/
+
+
+
+
 	//Initialize SDL, glew, engine
 	if (init() == false)
 	{
@@ -119,19 +142,23 @@ int main(int argc, char* argv[])
 				else if (event.key.keysym.sym == SDLK_r) renderer->ReloadShaders();
 				else if (event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_UP)
 				{
-					renderer->CameraMoveForward(true);
+					// renderer->CameraMoveForward(true);
+					renderer->SetTurnUp(true);
 				}
 				else if (event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
 				{
-					renderer->CameraMoveBackWard(true);
+					// renderer->CameraMoveBackWard(true);
+					renderer->SetTurnDown(true);
 				}
 				else if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_LEFT)
 				{
-					renderer->CameraMoveLeft(true);
+					// renderer->CameraMoveLeft(true);
+					renderer->SetTurnLeft(true);
 				}
 				else if (event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
 				{
-					renderer->CameraMoveRight(true);
+					// renderer->CameraMoveRight(true);
+					renderer->SetTurnRight(true);
 				}
 			}
 			else if (event.type == SDL_KEYUP)
@@ -139,19 +166,23 @@ int main(int argc, char* argv[])
 				// Key up events
 				if (event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_UP)
 				{
-					renderer->CameraMoveForward(false);
+					// renderer->CameraMoveForward(false);
+					renderer->SetTurnUp(false);
 				}
 				else if (event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
 				{
-					renderer->CameraMoveBackWard(false);
+					// renderer->CameraMoveBackWard(false);
+					renderer->SetTurnDown(false);
 				}
 				else if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_LEFT)
 				{
-					renderer->CameraMoveLeft(false);
+					// renderer->CameraMoveLeft(false);
+					renderer->SetTurnLeft(false);
 				}
 				else if (event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
 				{
-					renderer->CameraMoveRight(false);
+					// renderer->CameraMoveRight(false);
+					renderer->SetTurnRight(false);
 				}
 			}
 			else if (event.type == SDL_MOUSEMOTION)

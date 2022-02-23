@@ -13,6 +13,9 @@
 
 
 #define a 1.F
+#define s -6.F
+#define r 10.F
+
 // RENDERER
 Renderer::Renderer()
 {
@@ -59,28 +62,6 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::BuildWorld()
 {
-	/*GeometryNode& bunny = *this->m_nodes[OBJECS::BUNNY];
-	GeometryNode& ball = *this->m_nodes[OBJECS::BALL];
-	GeometryNode& chair = *this->m_nodes[OBJECS::CHAIR];
-	GeometryNode& floor = *this->m_nodes[OBJECS::FLOOR];
-	GeometryNode& wall = *this->m_nodes[OBJECS::WALLS];
-	GeometryNode& beam = *this->m_nodes[OBJECS::BEAM];
-
-	ball.model_matrix = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 35.f, 0.f));
-	ball.m_aabb.center = glm::vec3(ball.model_matrix * glm::vec4(ball.m_aabb.center, 1.f));
-
-	chair.model_matrix = glm::mat4(1.f);
-	floor.model_matrix = glm::mat4(1.f);
-	wall.model_matrix = glm::mat4(1.f);
-
-	
-	beam.model_matrix =
-		glm::translate(glm::mat4(1.f), glm::vec3(0.f, 50.f, 60.f)) *
-		glm::scale(glm::mat4(1.f), glm::vec3(2.5f));
-	beam.m_aabb.center = glm::vec3(beam.model_matrix * glm::vec4(beam.m_aabb.center, 1.f));*/
-
-
-
 	GeometryNode& terrain = *this->m_nodes[OBJECS::TERRAIN];
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 	CollidableNode& hull = *this->m_collidables_nodes[OBJECS::COLLISION_HULL];
@@ -94,7 +75,9 @@ void Renderer::BuildWorld()
 		// glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
 		// glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
 		craft.model_matrix;
-	
+
+	// Craft facing direction
+
 	// Scale everything down
 	this->m_world_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.01, 0.01, 0.01));
 
@@ -105,7 +88,7 @@ void Renderer::InitCamera()
 	// Have the camera positioned behind the craft
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 	glm::vec3 craftCoords = NodeToCameraCoords(craft.model_matrix[3]);
-	this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z); 
+	this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
 	this->m_camera_position.y = 0.4;  // Slightly above the craft   
 	this->m_camera_target_position = craftCoords;
 	this->m_camera_right = glm::normalize(m_camera_target_position * glm::vec3(0, 1, 0));
@@ -133,7 +116,7 @@ bool Renderer::InitLights()
 	this->m_light.SetPosition(glm::vec3(-0.20111 ,9.11239 ,-1.14328)); //(0, 3, 4.5)
 	this->m_light.SetTarget(glm::vec3(0.100368, 3.81349, -0.859176));
 	this->m_light.SetConeSize(110, 120);  //(40, 50)
-	this->m_light.CastShadow(false);
+	this->m_light.CastShadow(true);
 
 	return true;
 }
@@ -240,6 +223,7 @@ bool Renderer::InitCommonItems()
 
 bool Renderer::InitCommonMeshes()
 {
+
 	return true;  
 }
 
@@ -297,39 +281,64 @@ void Renderer::UpdateGeometry(float dt)
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 	CollidableNode& hull = *this->m_collidables_nodes[0];
 
-	craft.app_model_matrix =
-		glm::translate(glm::mat4(1.f), craft.m_aabb.center) *
-		//glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 0.f, 0.f)) *
-		glm::translate(glm::mat4(1.f), -craft.m_aabb.center) *
-		craft.model_matrix;
+	// Rotate the craft towards the desired direction
+	// X axis
+	float rotationX = 0.f;
+	if (m_turn_right)
+	{
+		rotationX -= r;
+	}
+	if (m_turn_left)
+	{
+		rotationX += r;
+	}
 
-	hull.app_model_matrix = hull.model_matrix;
+	// Y axis
+	float rotationY = 0.f;
+	if (m_turn_up)
+	{
+		rotationY += r;
+	}
+	if (m_turn_down)
+	{
+		rotationY -= r;
+	}
+
+	if (rotationX != 0.f)
+	{
+		craft.model_matrix *= glm::rotate(glm::mat4(1.f), dt * glm::radians(rotationX), glm::vec3(0, 1, 0));
+	}
+	if (rotationY != 0.f)
+	{
+		craft.model_matrix *= glm::rotate(glm::mat4(1.f), dt * glm::radians(rotationY), glm::vec3(1, 0, 0));
+	}
+
+	// Move the craft at a constant speed
+	glm::vec3 oldPos = glm::vec3(craft.model_matrix[3].x, craft.model_matrix[3].y, craft.model_matrix[3].z);
+	glm::vec3 newPos = oldPos + s * dt * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
+	craft.model_matrix[3] = glm::vec4(newPos.x, newPos.y, newPos.z, 1);
+
 
 
 	
-	/*bunny.app_model_matrix =
-		glm::translate(glm::mat4(1.f), bunny.m_aabb.center) *
-		glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(0.f, 1.f, 0.f)) *
-		glm::translate(glm::mat4(1.f), -bunny.m_aabb.center) *
-		bunny.model_matrix;
 
-	ball.app_model_matrix =
-		glm::translate(glm::mat4(1.f), ball.m_aabb.center) *
-		glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(.5f, .5f, 0.f)) *
-		glm::translate(glm::mat4(1.f), -ball.m_aabb.center) *
-		ball.model_matrix;
+	terrain.app_model_matrix = terrain.model_matrix;
 
-	beam.app_model_matrix = glm::translate(glm::mat4(1.f), beam.m_aabb.center) *
-		glm::rotate(glm::mat4(1.f), m_continous_time, glm::vec3(1.f, 0.f, 0.f)) *
-		glm::translate(glm::mat4(1.f), -beam.m_aabb.center) *
-		beam.model_matrix;*/
+	hull.app_model_matrix = hull.model_matrix;
+
+	craft.app_model_matrix =
+	
+		craft.model_matrix;
 }
 
 void Renderer::UpdateCamera(float dt)
 {
 	// Relocate the camera behind the craft
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
-	glm::vec3 craftCoords = CameraToNodeCoords(m_camera_position);
+	glm::vec3 craftCoords = NodeToCameraCoords(craft.model_matrix[3]);
+	this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
+	this->m_camera_position.y = 0.4;  // Slightly above the craft   
+	this->m_camera_target_position = craftCoords;
 
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
 
@@ -346,15 +355,15 @@ void Renderer::UpdateCamera(float dt)
 	rotation *= glm::rotate(glm::mat4(1.f), m_camera_look_angle_destination.x * speed, m_camera_up_vector);
 	m_camera_look_angle_destination = glm::vec2(0.f);
 
-	direction = rotation * glm::vec4(direction, 0.f);
+	direction = rotation * glm::vec4(direction, 0.f);	
 	m_camera_target_position = m_camera_position + direction * glm::distance(m_camera_position, m_camera_target_position);
 
-	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
+	m_view_matrix = glm::lookAt(m_camera_position,m_camera_target_position, m_camera_up_vector);
 
-	//std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
+	std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
 	std::cout << m_camera_target_position.x << " " << m_camera_target_position.y << " " << m_camera_target_position.z << " " << std::endl;
 	//std::cout << craft.m_aabb.center.x << " " << craft.m_aabb.center.y << " " << craft.m_aabb.center.z << " " << std::endl;
-
+	
 	//std::cout << m_light.GetPosition() << std::endl;
 	//m_light.SetPosition(m_camera_position);
 	//m_light.SetTarget(m_camera_target_position);
@@ -634,4 +643,24 @@ glm::vec3 Renderer::CameraToNodeCoords(const glm::vec3 & cameraCoords) {
 glm::vec3 Renderer::NodeToCameraCoords(const glm::vec3 & nodeCoords) {
 	const double analogy = 0.01;
 	return glm::vec3(nodeCoords.x * analogy, nodeCoords.y * analogy, nodeCoords.z * analogy);
+}
+
+void Renderer::SetTurnLeft(bool value)
+{
+	this->m_turn_left = value;
+}
+
+void Renderer::SetTurnRight(bool value)
+{
+	this->m_turn_right = value;
+}
+
+void Renderer::SetTurnUp(bool value)
+{
+	this->m_turn_up = value;
+}
+
+void Renderer::SetTurnDown(bool value)
+{
+	this->m_turn_down = value;
 }

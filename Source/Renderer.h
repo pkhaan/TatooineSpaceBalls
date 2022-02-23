@@ -25,7 +25,12 @@ protected:
 	glm::vec3										m_camera_up_vector;
 	glm::vec2										m_camera_movement;
 	glm::vec2										m_camera_look_angle_destination;
-	
+
+	bool m_turn_left;
+	bool m_turn_right;
+	bool m_turn_up;
+	bool m_turn_down;
+
 	float m_continous_time;
 
 	// Protected Functions
@@ -86,6 +91,10 @@ public:
 	void										CameraMoveLeft(bool enable);
 	void										CameraMoveRight(bool enable);
 	void										CameraLook(glm::vec2 lookDir);
+	void 										SetTurnLeft(bool value);
+	void 										SetTurnRight(bool value);
+	void										SetTurnUp(bool value);
+	void										SetTurnDown(bool value);
 };
 
 #endif
