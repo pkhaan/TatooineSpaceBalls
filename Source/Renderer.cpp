@@ -85,6 +85,8 @@ void Renderer::BuildWorld()
 
 void Renderer::InitCamera()
 {
+	this->m_free_look_mode = false;
+
 	// Have the camera positioned behind the craft
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 	glm::vec3 craftCoords = NodeToCameraCoords(craft.model_matrix[3]);
@@ -313,32 +315,33 @@ void Renderer::UpdateGeometry(float dt)
 		craft.model_matrix *= glm::rotate(glm::mat4(1.f), dt * glm::radians(rotationY), glm::vec3(1, 0, 0));
 	}
 
+	float boost = 0.f;
+	if(m_set_speed)
+	{
+		boost = 2 * s;
+	}
+
 	// Move the craft at a constant speed
 	glm::vec3 oldPos = glm::vec3(craft.model_matrix[3].x, craft.model_matrix[3].y, craft.model_matrix[3].z);
-	glm::vec3 newPos = oldPos + s * dt * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
+	glm::vec3 newPos = oldPos + (s + boost) * dt * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
 	craft.model_matrix[3] = glm::vec4(newPos.x, newPos.y, newPos.z, 1);
 
-
-
-	
-
 	terrain.app_model_matrix = terrain.model_matrix;
-
 	hull.app_model_matrix = hull.model_matrix;
-
-	craft.app_model_matrix =
-	
-		craft.model_matrix;
+	craft.app_model_matrix = craft.model_matrix;
 }
 
 void Renderer::UpdateCamera(float dt)
 {
 	// Relocate the camera behind the craft
-	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
-	glm::vec3 craftCoords = NodeToCameraCoords(craft.model_matrix[3]);
-	this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
-	this->m_camera_position.y = 0.4;  // Slightly above the craft   
-	this->m_camera_target_position = craftCoords;
+	if (!m_free_look_mode)
+	{
+		GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
+		glm::vec3 craftCoords = NodeToCameraCoords(craft.model_matrix[3]);
+		this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
+		this->m_camera_position.y = 0.4;  // Slightly above the craft   
+		this->m_camera_target_position = craftCoords;
+	}
 
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
 
@@ -663,4 +666,14 @@ void Renderer::SetTurnUp(bool value)
 void Renderer::SetTurnDown(bool value)
 {
 	this->m_turn_down = value;
+}
+
+void Renderer::SetFreeLookMode(const bool value)
+{
+	this->m_free_look_mode = value;
+}
+
+void Renderer::SetHighSpeed(bool value)
+{
+	this->m_set_speed = value;
 }

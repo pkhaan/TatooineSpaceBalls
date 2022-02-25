@@ -30,7 +30,8 @@ protected:
 	bool m_turn_right;
 	bool m_turn_up;
 	bool m_turn_down;
-
+	bool m_free_look_mode;
+	bool m_set_speed;
 	float m_continous_time;
 
 	// Protected Functions
@@ -95,6 +96,8 @@ public:
 	void 										SetTurnRight(bool value);
 	void										SetTurnUp(bool value);
 	void										SetTurnDown(bool value);
+	void										SetFreeLookMode(const bool value);
+	void										SetHighSpeed(bool value);
 };
 
 #endif

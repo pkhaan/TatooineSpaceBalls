@@ -10,6 +10,8 @@ using namespace std;
 using namespace irrklang;
 #pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
+bool freeLookMode = false;
+
 // Mouse coordinates
 int mouseX;
 int mouseY;
@@ -140,25 +142,62 @@ int main(int argc, char* argv[])
 				// Key down events
 				if (event.key.keysym.sym == SDLK_ESCAPE) quit = true;
 				else if (event.key.keysym.sym == SDLK_r) renderer->ReloadShaders();
+				else if (event.key.keysym.sym == SDLK_SPACE)
+				{
+					freeLookMode = !freeLookMode;
+					renderer->SetFreeLookMode(freeLookMode);
+				}
+				else if (event.key.keysym.sym == SDLK_LSHIFT)
+				{
+					renderer->SetHighSpeed(true);
+				}
 				else if (event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_UP)
 				{
-					// renderer->CameraMoveForward(true);
-					renderer->SetTurnUp(true);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveForward(true);
+					}
+					else
+					{
+						renderer->SetTurnUp(true);
+					}
 				}
 				else if (event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
 				{
-					// renderer->CameraMoveBackWard(true);
-					renderer->SetTurnDown(true);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveBackWard(true);	
+					}
+					else
+					{
+						renderer->SetTurnDown(true);
+					}
 				}
 				else if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_LEFT)
 				{
-					// renderer->CameraMoveLeft(true);
-					renderer->SetTurnLeft(true);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveLeft(true);
+					}
+					else
+					{
+						renderer->SetTurnLeft(true);
+					}
+					 
+					
 				}
 				else if (event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
 				{
-					// renderer->CameraMoveRight(true);
-					renderer->SetTurnRight(true);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveRight(true);
+					}
+					else
+					{
+						renderer->SetTurnRight(true);
+					}
+					
+					
 				}
 			}
 			else if (event.type == SDL_KEYUP)
@@ -166,23 +205,51 @@ int main(int argc, char* argv[])
 				// Key up events
 				if (event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_UP)
 				{
-					// renderer->CameraMoveForward(false);
-					renderer->SetTurnUp(false);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveForward(false);
+					}
+					else
+					{
+						renderer->SetTurnUp(false);
+					}
 				}
 				else if (event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
 				{
-					// renderer->CameraMoveBackWard(false);
-					renderer->SetTurnDown(false);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveBackWard(false);
+					}
+					else
+					{
+						renderer->SetTurnDown(false);
+					}
 				}
 				else if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_LEFT)
 				{
-					// renderer->CameraMoveLeft(false);
-					renderer->SetTurnLeft(false);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveLeft(false);
+					}
+					else
+					{
+						renderer->SetTurnLeft(false);
+					}
 				}
 				else if (event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
 				{
-					// renderer->CameraMoveRight(false);
-					renderer->SetTurnRight(false);
+					if (freeLookMode)
+					{
+						renderer->CameraMoveRight(false);
+					}
+					else
+					{
+						renderer->SetTurnRight(false);
+					}
+				}
+				else if (event.key.keysym.sym == SDLK_LSHIFT)
+				{
+					renderer->SetHighSpeed(false);
 				}
 			}
 			else if (event.type == SDL_MOUSEMOTION)
