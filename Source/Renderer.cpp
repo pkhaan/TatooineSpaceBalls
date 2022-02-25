@@ -14,7 +14,7 @@
 
 #define a 1.F
 #define s -12.F
-#define r 10.F
+#define r 16.F
 
 // RENDERER
 Renderer::Renderer()
@@ -382,7 +382,7 @@ void Renderer::UpdateCamera(float dt)
 		GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 		glm::vec3 craftCoords = NodeToCameraCoords(craft.model_matrix[3]);
 		this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
-		this->m_camera_position.y = 0.4;  // Slightly above the craft   
+		this->m_camera_position.y = craftCoords.y + 0.1;  // Slightly above the craft   
 		this->m_camera_target_position = craftCoords;
 	}
 

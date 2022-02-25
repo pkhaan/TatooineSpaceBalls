@@ -253,7 +253,7 @@ void main(void)
 
 	out_color = vec4(shadow_value * brdf * spotEffect, 1.0);
 #else
-	out_color = vec4(cook_torrance(surfToEye, surfToLight, pos_wcs.xyz,
+	out_color = vec4(shadow_value * cook_torrance(surfToEye, surfToLight, pos_wcs.xyz,
 		normal_wcs.xyz,
 		albedo.xyz, mask), 1.0);
 #endif
