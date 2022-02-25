@@ -13,7 +13,7 @@
 
 
 #define a 1.F
-#define s -6.F
+#define s -12.F
 #define r 10.F
 
 // RENDERER
@@ -116,7 +116,7 @@ bool Renderer::InitLights()
 {
 	//GeometryNode& hull = *this->m_nodes[OBJECS::COLLISION_HULL];
 	//float width = 2.0f * glm::length(hull.model_matrix[0]);
-	//float diagonal = sqrt(2.0f * pow(width, 2));
+	//float diagonal = sqrt(2.0f * pow(width, 2)); 
 	//float height = sqrt(pow(width, 2) - pow(diagonal / 2, 2));
 
 	this->m_light.SetColor(glm::vec3(253.f,243.f, 217.f));  //40.f 
