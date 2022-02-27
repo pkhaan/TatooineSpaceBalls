@@ -125,7 +125,7 @@ bool Renderer::InitLights()
 	this->m_light.SetPosition(glm::vec3(-0.20111 ,9.11239 ,-1.14328)); //(0, 3, 4.5)
 	this->m_light.SetTarget(glm::vec3(0.100368, 3.81349, -0.859176));
 	this->m_light.SetConeSize(110, 120);  //(40, 50)
-	this->m_light.CastShadow(true);
+	this->m_light.CastShadow(false);
 
 	return true;
 }
@@ -141,7 +141,6 @@ bool Renderer::InitShaders()
 	m_geometry_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	m_geometry_program.CreateProgram();
 	
-
 
 	vertex_shader_path = "Assets/Shaders/deferred pass.vert";
 	fragment_shader_path = "Assets/Shaders/deferred pass.frag";

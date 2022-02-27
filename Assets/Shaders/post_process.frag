@@ -16,7 +16,7 @@ float linearize(const in float depth)
 }
 
 //#define PREVIEW_SHADOW_MAP
-#define CROSS_HAIR
+//#define CROSS_HAIR
 
 void main(void)
 {

@@ -50,3 +50,21 @@ The user can increase the craft's speed by pressing and holding the **LSHIFT** k
 ### Scene lighting
 
 For the scene's lighting, a spot light was used. The spot light is placed at an angle, overlooking the scene's terrain. The light's RGB coordinates are (255, 255, 241), which emulate that of the sun. In order to give a realistic feel to the illumination of the ground, the spot light's penumbra was completely removed.
+
+### Scene Shading
+
+For the scene's shading a Cook-Torrance Algorithm was used.
+The Basic Formula for the algorithm is the following 
+
+![image](docs/cookTorrance.png)
+
+### Shadow Maps
+
+### Deferred Rendering
+
+We used Deferred Rendering and Shading for the project
+and depth of field feature was also used.
+
+
+
+
