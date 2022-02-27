@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <stb/stb_image.h>
 
 
 #define a 1.F
@@ -70,6 +71,7 @@ void Renderer::BuildWorld()
 	GeometryNode& terrain = *this->m_nodes[OBJECS::TERRAIN];
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
 	CollidableNode& hull = *this->m_collidables_nodes[OBJECS::COLLISION_HULL];
+
 
 	// Relocate the craft to its starting position
 	craft.model_matrix[3] = glm::vec4(33.6461, 30., -229.83, 1.);
@@ -138,6 +140,8 @@ bool Renderer::InitShaders()
 	m_geometry_program.LoadGeometryShaderFromFile(geometry_shader_path.c_str());
 	m_geometry_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	m_geometry_program.CreateProgram();
+	
+
 
 	vertex_shader_path = "Assets/Shaders/deferred pass.vert";
 	fragment_shader_path = "Assets/Shaders/deferred pass.frag";
@@ -145,6 +149,7 @@ bool Renderer::InitShaders()
 	m_deferred_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
 	m_deferred_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	m_deferred_program.CreateProgram();
+	m_deferred_program.LoadUniform("shadowmap_texture");
 
 	vertex_shader_path = "Assets/Shaders/post_process.vert";
 	fragment_shader_path = "Assets/Shaders/post_process.frag";
@@ -300,7 +305,7 @@ bool Renderer::InitGeometricMeshes()
 		}
 	}
 
-	GeometricMesh* mesh = loader.load(assets[1]);
+	GeometricMesh* mesh = loader.load(assets[0]);
 
 	if (mesh != nullptr)
 	{
@@ -322,9 +327,25 @@ void Renderer::Update(float dt)
 
 void Renderer::UpdateGeometry(float dt)
 {
+	// Collisions
+	CollidableNode& hull = *this->m_collidables_nodes[0];
 	GeometryNode& terrain = *this->m_nodes[OBJECS::TERRAIN];
 	GeometryNode& craft = *this->m_nodes[OBJECS::CRAFT];
-	CollidableNode& hull = *this->m_collidables_nodes[0];
+
+	// Check for collision between craft and hull
+	glm::vec3 craftCenter = glm::vec3(craft.model_matrix[3].x, craft.model_matrix[3].y, craft.model_matrix[3].z);
+	glm::vec3 craftNose = craftCenter - glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
+	float_t isectT = 20.f;
+	if (hull.intersectRay(
+		craftCenter,
+		craftNose,
+		m_world_matrix, isectT)
+	)
+	{
+		std::cout << "Collision" << std::endl;
+	}
+
+	// Movement
 
 	// Rotate the craft towards the desired direction
 	// X axis
@@ -368,14 +389,18 @@ void Renderer::UpdateGeometry(float dt)
 	glm::vec3 oldPos = glm::vec3(craft.model_matrix[3].x, craft.model_matrix[3].y, craft.model_matrix[3].z);
 	glm::vec3 newPos = oldPos + (s + boost) * dt * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
 	craft.model_matrix[3] = glm::vec4(newPos.x, newPos.y, newPos.z, 1);
+	craft.m_aabb.center = glm::vec3(newPos.x, newPos.y, newPos.z);
+	craft.m_aabb.min = glm::vec3(newPos.x, newPos.y - 2, newPos.z);
 
 	terrain.app_model_matrix = terrain.model_matrix;
-	hull.app_model_matrix = hull.model_matrix;
 	craft.app_model_matrix = craft.model_matrix;
+	//craft.RealignAabb();
 }
 
 void Renderer::UpdateCamera(float dt)
 {
+
+
 	// Relocate the camera behind the craft
 	if (!m_free_look_mode)
 	{
@@ -384,6 +409,7 @@ void Renderer::UpdateCamera(float dt)
 		this->m_camera_position = craftCoords + 0.3f * glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
 		this->m_camera_position.y = craftCoords.y + 0.1;  // Slightly above the craft   
 		this->m_camera_target_position = craftCoords;
+		std::cout << craft.m_aabb.center.x << " " << craft.m_aabb.center.y << " " << craft.m_aabb.center.z << " " << std::endl;
 	}
 
 	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
@@ -406,10 +432,14 @@ void Renderer::UpdateCamera(float dt)
 
 	m_view_matrix = glm::lookAt(m_camera_position,m_camera_target_position, m_camera_up_vector);
 
-	std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
-	std::cout << m_camera_target_position.x << " " << m_camera_target_position.y << " " << m_camera_target_position.z << " " << std::endl;
-	//std::cout << craft.m_aabb.center.x << " " << craft.m_aabb.center.y << " " << craft.m_aabb.center.z << " " << std::endl;
+	//std::cout << m_camera_position.x << " " << m_camera_position.y << " " << m_camera_position.z << " " << std::endl;
+	//std::cout << m_camera_target_position.x << " " << m_camera_target_position.y << " " << m_camera_target_position.z << " " << std::endl;
 	
+	
+
+
+
+
 	//std::cout << m_light.GetPosition() << std::endl;
 	//m_light.SetPosition(m_camera_position);
 	//m_light.SetTarget(m_camera_target_position);
@@ -621,6 +651,11 @@ void Renderer::RenderCollidableGeometry()
 
 	for (auto& node : this->m_collidables_nodes)
 	{
+		if (node == m_collidables_nodes[0])
+		{
+			continue;
+		}
+
 		float_t isectT = 0.f;
 		int32_t primID = -1;
 		int32_t totalRenderedPrims = 0;
@@ -755,13 +790,13 @@ void Renderer::RenderShadowMaps()
 
 		for (auto& node : this->m_collidables_nodes)
 		{
-			if (node == m_nodes[OBJECS::COLLISION_HULL])
+			if (node == m_collidables_nodes[0])
 			{
 				continue;
 			}
 
 			//if (node->intersectRay(m_camera_position, camera_dir, m_world_matrix, isectT, primID)) continue;
-			node->intersectRay(m_camera_position, camera_dir, m_world_matrix, isectT, primID);
+			//node->intersectRay(m_camera_position, camera_dir, m_world_matrix, isectT, primID); 
 
 			glBindVertexArray(node->m_vao);
 

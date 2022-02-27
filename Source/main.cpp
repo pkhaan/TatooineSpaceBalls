@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 
 	
 	// start the sound engine with default parameters
-	ISoundEngine* engine = createIrrKlangDevice();
+	/*ISoundEngine* engine = createIrrKlangDevice();
 	//Initialize SDL, glew, engine
 	if (!engine)
 		return 0; // error starting up the engine
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 		vec3df(0, 0, 0), true, false, true);
 	if (music)
 		music->setMinDistance(5.0f);
-	printf("\nPlaying streamed sound in 3D.");
+	printf("\nPlaying streamed sound in 3D.");*/
 
 
 

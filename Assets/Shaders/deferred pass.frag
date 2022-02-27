@@ -142,7 +142,7 @@ vec3 fresnel(
 	const in float VdotH,
 	const in float metallic)
 {
-	const vec3 f0 = mix(reflectance, diffColor, metallic);
+    vec3 f0 = mix(reflectance, diffColor, metallic);
 	float u = 1.0 - VdotH;
 	float u5 = (u * u) * (u * u) * u;
 	return min(vec3(1.0), f0  + (vec3(1.0) - f0) * u5);
@@ -178,7 +178,7 @@ vec3 blinn_phong(
 	float NdotH = max(dot(pNormal, halfVector), 0.0);
 	float metallic = pMask.r;
 	float ao = pMask.g;
-	vec3 reflectance = vec3(0.05);//vec3(pMask.b);
+	vec3 reflectance = vec3(0.5);//vec3(pMask.b);
 	vec3 F = fresnel(pAlbedo, reflectance, max(dot(halfVector, pSurfToEye), 0.0), metallic);
 
 	vec3 kd = ((ao * pAlbedo) / _PI_) * (1.0 - F) * (1.0 - metallic);
@@ -253,8 +253,15 @@ void main(void)
 
 	out_color = vec4(shadow_value * brdf * spotEffect, 1.0);
 #else
-	out_color = vec4(shadow_value * cook_torrance(surfToEye, surfToLight, pos_wcs.xyz,
+
+float spot = 1.5;
+compute_spotlight(surfToLight);
+vec3 crdf = cook_torrance(surfToEye, surfToLight, pos_wcs.xyz,
 		normal_wcs.xyz,
-		albedo.xyz, mask), 1.0);
+		albedo.xyz, mask);
+
+	out_color = vec4(shadow_value * crdf * spot, 1.0);
+
+
 #endif
 }
