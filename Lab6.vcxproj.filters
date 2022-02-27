@@ -94,12 +94,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\basic_rendering.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Shaders\basic_rendering.vert">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Assets\Shaders\post_process.frag">
       <Filter>Resource Files</Filter>
     </None>
@@ -112,10 +106,19 @@
     <None Include="Assets\Shaders\shadow_map_rendering.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Assets\Shaders\skybox_rendering.frag">
+    <None Include="Assets\Shaders\deferred pass.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Assets\Shaders\skybox_rendering.vert">
+    <None Include="Assets\Shaders\deferred pass.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\geometry pass.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\geometry pass.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\geometry pass.geom">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

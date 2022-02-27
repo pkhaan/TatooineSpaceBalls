@@ -44,6 +44,7 @@ protected:
 	void BuildWorld();
 	void InitCamera();
 	void RenderGeometry();
+	void RenderDeferredShading();
 	void RenderStaticGeometry();
 	void RenderCollidableGeometry();
 	void RenderShadowMaps();
@@ -67,14 +68,21 @@ protected:
 
 	LightNode									m_light;
 	ShaderProgram								m_geometry_program;
+	ShaderProgram								m_deferred_program;
 	ShaderProgram								m_post_program;
 	ShaderProgram								m_spot_light_shadow_map_program;
 
 	GLuint m_fbo;
-	GLuint m_fbo_texture;
-	GLuint m_fbo_depth_texture;
 	GLuint m_vao_fbo;
 	GLuint m_vbo_fbo_vertices;
+
+	GLuint m_fbo_texture;
+
+	GLuint m_fbo_depth_texture;
+	GLuint m_fbo_pos_texture;
+	GLuint m_fbo_normal_texture;
+	GLuint m_fbo_albedo_texture;
+	GLuint m_fbo_mask_texture;
 
 public:
 
