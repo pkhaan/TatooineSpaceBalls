@@ -304,12 +304,12 @@ bool Renderer::InitGeometricMeshes()
 		}
 	}
 
-	GeometricMesh* mesh = loader.load(assets[0]);
+	GeometricMesh* mesh = loader.load(assets[OBJECS::COLLISION_HULL]);  // Load Collision Hull
 
 	if (mesh != nullptr)
 	{
 		CollidableNode* node = new CollidableNode();
-		node->Init(assets[1], mesh);
+		node->Init(assets[OBJECS::COLLISION_HULL], mesh);
 		this->m_collidables_nodes.push_back(node);
 		delete mesh;
 	}
@@ -334,11 +334,11 @@ void Renderer::UpdateGeometry(float dt)
 	// Check for collision between craft and hull
 	glm::vec3 craftCenter = glm::vec3(craft.model_matrix[3].x, craft.model_matrix[3].y, craft.model_matrix[3].z);
 	glm::vec3 craftNose = craftCenter - glm::vec3(craft.model_matrix[2].x, craft.model_matrix[2].y, craft.model_matrix[2].z);
-	float_t isectT = 20.f;
+	float_t isectT = 0.1f;
 	if (hull.intersectRay(
-		craftCenter,
-		craftNose,
-		m_world_matrix, isectT)
+		NodeToCameraCoords(craftCenter),
+		NodeToCameraCoords(craftNose),
+		m_world_matrix, isectT, 1.f)
 	)
 	{
 		std::cout << "Collision" << std::endl;
