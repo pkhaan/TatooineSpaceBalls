@@ -169,6 +169,7 @@ copy "$(SolutionDir)3rd party\bin\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Source\Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="Source\AssetManager.hpp" />
     <ClInclude Include="Source\CollidableNode.h" />
     <ClInclude Include="Source\GeometricMesh.h" />
@@ -177,7 +178,6 @@ copy "$(SolutionDir)3rd party\bin\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Source\OBJLoader.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\ShaderProgram.h" />
-    <ClInclude Include="Source\Skybox.h" />
     <ClInclude Include="Source\TextureManager.h" />
     <ClInclude Include="Source\Tools.h" />
     <ClInclude Include="Source\Vector.h" />

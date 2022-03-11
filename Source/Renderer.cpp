@@ -87,7 +87,6 @@ void Renderer::BuildWorld()
 
 	// Scale everything down
 	this->m_world_matrix = glm::scale(glm::mat4(1.f), glm::vec3(0.01, 0.01, 0.01));
-
 }
 
 void Renderer::InitCamera()
@@ -122,10 +121,11 @@ bool Renderer::InitLights()
 	//float height = sqrt(pow(width, 2) - pow(diagonal / 2, 2));
 
 	this->m_light.SetColor(glm::vec3(253.f,243.f, 217.f));  //40.f 
-	this->m_light.SetPosition(glm::vec3(-0.20111 ,9.11239 ,-1.14328)); //(0, 3, 4.5)
+	this->m_light.SetPosition(glm::vec3(-0.20111, 9.11239, -1.14328)); //(0, 3, 4.5)
 	this->m_light.SetTarget(glm::vec3(0.100368, 3.81349, -0.859176));
 	this->m_light.SetConeSize(110, 120);  //(40, 50)
-	this->m_light.CastShadow(false);
+	this->m_light.CastShadow(true);
+	//this->m_light.CastShadow(false);
 
 	return true;
 }
@@ -461,6 +461,12 @@ void Renderer::Render()
 	RenderDeferredShading();
 	RenderPostProcess();
 
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+
+
 	GLenum error = Tools::CheckGLError();
 
 	if (error != GL_NO_ERROR)
@@ -619,7 +625,7 @@ void Renderer::RenderStaticGeometry()
 				m_geometry_program.loadInt("uniform_tex_mask", 1);
 				glBindTexture(GL_TEXTURE_2D, node->parts[j].mask_textureID);
 			}
-
+				
 			if ((node->parts[j].bump_textureID > 0 || node->parts[j].normal_textureID > 0))
 			{
 				glActiveTexture(GL_TEXTURE2);
@@ -748,6 +754,7 @@ void Renderer::RenderGeometry()
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 }
+
 void Renderer::RenderShadowMaps()
 {
 	if (m_light.GetCastShadowsStatus())

@@ -10,7 +10,10 @@
 
 ### Introduction
 
+##### Terrain without the Shadows
 ![Intro image](docs/intro_img.png)
+
+##### Terrain with the Shadows
 
 The goal of this assignment is create a simple game using OpenGL. The project's code is based on similar lab code. 
 
@@ -56,7 +59,6 @@ For the scene's lighting, a spot light was used. The spot light is placed at an 
 For the scene's shading a Cook-Torrance Algorithm was used.
 The Basic Formula for the algorithm is the following 
 
-![image](docs/cookTorrance.png)
 
 ### Shadow Maps
 
