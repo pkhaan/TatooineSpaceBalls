@@ -28,7 +28,7 @@ The assignment requires the implementation of the following features:
 * Load the terrain and the craft using their .obj files.
 * Use albedo and normal mask maps.
 * Allow the craft to navigate freely around the map.
-* Create andposition a camera behind the craft.
+* Create and position the camera behind the craft.
 * Implement at least one light source.
 * Implement a physically correct light model, such as normalized Blinn-Phong or Cook-Torrance.
 * Detect collisions between objects.
@@ -65,6 +65,14 @@ The Basic Formula for the algorithm is the following
 
 
 ### Shadow Maps
+
+The idea behind shadow mapping is quite simple: we render the scene from the light's point of view and everything we see from the light's perspective is lit and everything we can't see must be in shadow. Imagine a floor section with a large box between itself and a light source. Since the light source will see this box and not the floor section when looking in its direction that specific floor section should be in shadow.Here all the blue lines represent the fragments that the light source can see. The occluded fragments are shown as black lines: these are rendered as being shadowed. If we were to draw a line or ray from the light source to a fragment on the right-most box we can see the ray first hits the floating container before hitting the right-most container. As a result, the floating container's fragment is lit and the right-most container's fragment is not lit and thus in shadow.
+
+We want to get the point on the ray where it first hit an object and compare this closest point to other points on this ray. We then do a basic test to see if a test point's ray position is further down the ray than the closest point and if so, the test point must be in shadow. Iterating through possibly thousands of light rays from such a light source is an extremely inefficient approach and doesn't lend itself too well for real-time rendering. We can do something similar, but without casting light rays. Instead, we use something we're quite familiar with: the depth buffer.
+
+### Audio Sampling
+
+For our project's audio we used the Irrklang library for its modularity and useability.
 
 ### Deferred Rendering
 

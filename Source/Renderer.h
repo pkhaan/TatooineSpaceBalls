@@ -106,6 +106,8 @@ public:
 	void										SetTurnDown(bool value);
 	void										SetFreeLookMode(const bool value);
 	void										SetHighSpeed(bool value);
+	unsigned int loadTexture(char const* path);
+	unsigned int loadCubemap(std::vector<std::string> faces);
 };
 
 #endif
