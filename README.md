@@ -1,7 +1,7 @@
 # TatooineSpaceBalls
 #### University Project for CG made using OpenGL
 
-->Simply Execute the .sln file as the Assets are already uploaded in the repo
+* Simply Execute the .sln file as the Assets are already uploaded in the repo
 
 ### Members
 
@@ -16,11 +16,8 @@
 ##### Terrain without the Shadows
 ![Intro image](docs/shadowsOut.png)
 
-####Shadow of the Craft
+#### Shadow of the Craft
 ![Intro image](docs/craft.png)
-
-
-##### Terrain with the Shadows
 
 The goal of this assignment is create a simple game using OpenGL. The project's code is based on similar lab code. 
 
