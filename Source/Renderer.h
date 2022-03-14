@@ -43,6 +43,7 @@ protected:
 	bool InitIntermediateBuffers();
 	void BuildWorld();
 	void InitCamera();
+	void RenderCubemap();
 	void RenderGeometry();
 	void RenderDeferredShading();
 	void RenderStaticGeometry();
@@ -64,6 +65,7 @@ protected:
 	std::vector<GeometryNode*> m_backround;
 	std::vector<GeometryNode*> m_opaque_nodes;
 	std::vector<GeometryNode*> m_transparent_nodes;
+	std::vector<GeometryNode*> m_cubemap_nodes;
 	std::vector<CollidableNode*> m_collidables_nodes;
 
 	LightNode									m_light;
@@ -71,6 +73,7 @@ protected:
 	ShaderProgram								m_deferred_program;
 	ShaderProgram								m_post_program;
 	ShaderProgram								m_spot_light_shadow_map_program;
+	ShaderProgram								m_cubemap_program;
 
 	GLuint m_fbo;
 	GLuint m_vao_fbo;
@@ -83,6 +86,8 @@ protected:
 	GLuint m_fbo_normal_texture;
 	GLuint m_fbo_albedo_texture;
 	GLuint m_fbo_mask_texture;
+
+	GLuint m_cubemap_texture;
 
 public:
 

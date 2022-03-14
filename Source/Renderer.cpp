@@ -164,6 +164,13 @@ bool Renderer::InitShaders()
 	m_spot_light_shadow_map_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
 	m_spot_light_shadow_map_program.CreateProgram();
 
+	vertex_shader_path = "Assets/Shaders/cubemap_rendering.vert";
+	fragment_shader_path = "Assets/Shaders/cubemap_rendering.frag";
+
+	m_cubemap_program.LoadVertexShaderFromFile(vertex_shader_path.c_str());
+	m_cubemap_program.LoadFragmentShaderFromFile(fragment_shader_path.c_str());
+	m_cubemap_program.CreateProgram();
+
 	return true;
 }
 
@@ -314,6 +321,33 @@ bool Renderer::InitGeometricMeshes()
 		delete mesh;
 	}
 
+	// Load cubemap textures
+	std::array<const char *, 6> cubemap_assets = {
+		"Assets/cubemap/px.png",
+		"Assets/cubemap/nx.png",
+		"Assets/cubemap/py.png",
+		"Assets/cubemap/ny.png",
+		"Assets/cubemap/pz.png",
+		"Assets/cubemap/nz.png",
+	};
+
+	for (auto & asset : cubemap_assets)
+	{
+		GeometricMesh* mesh = loader.load(asset);
+
+		if (mesh != nullptr)
+		{
+			GeometryNode *node = new GeometryNode();
+			node->Init(asset, mesh);
+			this->m_cubemap_nodes.push_back(node);
+			delete mesh;
+		}
+		else
+		{
+			initialized = false;
+		}
+	}
+
 	return initialized;
 }
 
@@ -447,6 +481,7 @@ void Renderer::UpdateCamera(float dt)
 
 bool Renderer::ReloadShaders()
 {
+	m_cubemap_program.ReloadProgram();
 	m_geometry_program.ReloadProgram();
 	m_post_program.ReloadProgram();
 	m_deferred_program.ReloadProgram();
@@ -456,6 +491,7 @@ bool Renderer::ReloadShaders()
 
 void Renderer::Render()
 {
+	RenderCubemap();
 	RenderShadowMaps();
 	RenderGeometry();
 	RenderDeferredShading();
@@ -474,6 +510,12 @@ void Renderer::Render()
 		printf("Reanderer:Draw GL Error\n");
 		system("pause");
 	}
+}
+
+void Renderer::RenderCubemap()
+{
+	glGenTextures(1, m_cubemap_texture);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap_texture);	
 }
 
 void Renderer::RenderDeferredShading()
