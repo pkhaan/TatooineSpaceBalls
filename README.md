@@ -16,6 +16,9 @@
 ##### Terrain without the Shadows
 ![Intro image](docs/shadowsOut.png)
 
+####Shadow of the Craft
+![Intro image](docs/craft.png)
+
 
 ##### Terrain with the Shadows
 
