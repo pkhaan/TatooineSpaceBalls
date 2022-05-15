@@ -5,8 +5,8 @@
 
 ### Members
 
-* Petros Chanas 3170173
-* Konstantinos Vasilopoulos 3180018
+* Petros Chanas 
+* Konstantinos Vasilopoulos
 
 ### Introduction
 
